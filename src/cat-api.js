@@ -9,7 +9,7 @@ async function fetchBreeds() {
     const response = await axios.get('https://api.thecatapi.com/v1/breeds');
     return response.data;
   } catch (error) {
-    throw new Error(`Axios error! ${error.message}`);
+    // throw new Error(`Axios error fetchBreeds! ${error.message}`);
   }
 }
 
@@ -21,7 +21,7 @@ async function fetchCatByBreed(breedId) {
     );
     return response.data;
   } catch (error) {
-    throw new Error(`Axios error! ${error.message}`);
+    // throw new Error(`Axios error fetchCatByBreed! ${error.message}`);
   }
 }
 

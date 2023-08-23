@@ -6,28 +6,43 @@ const loader = document.querySelector('.loader');
 const error = document.querySelector('.error');
 
 // Pавантаження даних
-function setLoading(type = 'none') {
-  loader.style.display = type;
+function setVisible(el, type = 'hide') {
+  if (type == 'hide') {
+    // el.style.display = 'none';
+    el.classList.add('hide');
+    el.classList.remove('show');
+  } else {
+    // el.style.display = 'block';
+    el.classList.add('show');
+    el.classList.remove('hide');
+  }
 }
 
-// Показуємо блок помилки
-function setError(type = 'none') {
-  error.style.display = type;
-}
-setError();
+// За замовчуванням ховаємо повідомлення про помилку
+setVisible(error, 'hide');
+setVisible(breedSelect, 'hide');
+setVisible(catInfo, 'hide');
 
 // Виконуємо запит і наповнюємо select опціями
 fetchBreeds()
   .then(breeds => {
-    breeds.forEach(breed => {
-      const option = document.createElement('option');
-      option.value = breed.reference_image_id;
-      option.textContent = breed.name;
-      breedSelect.appendChild(option);
-    });
+    if (typeof breeds == 'undefined') {
+      setVisible(error, 'show');
+      setVisible(loader, 'hide');
+    } else {
+      breeds.forEach(breed => {
+        const option = document.createElement('option');
+        option.value = breed.reference_image_id;
+        option.textContent = breed.name;
+        breedSelect.appendChild(option);
+      });
 
-    // Після завантаження даних, приховуємо лоадер
-    setLoading();
+      // Після завантаження даних, приховуємо лоадер
+      setVisible(loader, 'hide');
+
+      // Показуємо наповнений список
+      setVisible(breedSelect, 'show');
+    }
   })
   .catch(error => {
     console.error('Error fetching breeds:', error);
@@ -38,23 +53,35 @@ breedSelect.addEventListener('change', async function () {
   const selectedBreedId = breedSelect.value;
 
   if (selectedBreedId) {
-    setLoading('block');
+    setVisible(loader, 'show');
+    setVisible(catInfo, 'hide');
+    setVisible(error, 'hide');
 
     try {
       const catData = await fetchCatByBreed(selectedBreedId);
       console.log('catData: ', catData);
 
-      const { name, description, temperament } = catData.breeds[0];
+      if (typeof catData == 'undefined') {
+        setVisible(error, 'show');
+        setVisible(loader, 'hide');
+        setVisible(catInfo, 'hide');
+      } else {
+        const { name, description, temperament } = catData.breeds[0];
 
-      catInfo.innerHTML = `<img src="${catData.url}" alt="">
-                                            <div class="text-holder">
-                                                <h1 class="title">${name}</h1>
-                                                <h3 class="temperament">${temperament}</h3>
-                                                <p class="desk">${description}</p>
-                                            </div>`;
+        catInfo.innerHTML = `<img src="${catData.url}" alt="">
+                                              <div class="text-holder">
+                                                  <h1 class="title">${name}</h1>
+                                                  <h3 class="temperament">${temperament}</h3>
+                                                  <p class="desk">${description}</p>
+                                              </div>`;
+        setVisible(catInfo, 'show');
+        setVisible(loader, 'hide');
+        setVisible(error, 'hide');
+      }
     } catch (error) {
       console.error('Error fetching cat:', error);
-      setLoading();
+      setVisible(error, 'show');
+      setVisible(loader, 'hide');
     }
   }
 });

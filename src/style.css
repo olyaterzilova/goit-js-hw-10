@@ -10,3 +10,13 @@ body {
 .cat-info img {
   max-width: 300px;
 }
+.error {
+  color: red;
+}
+
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
