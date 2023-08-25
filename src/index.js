@@ -37,6 +37,10 @@ fetchBreeds()
         breedSelect.appendChild(option);
       });
 
+      new SlimSelect({
+        select: '.breed-select',
+      });
+
       // Після завантаження даних, приховуємо лоадер
       setVisible(loader, 'hide');
 
